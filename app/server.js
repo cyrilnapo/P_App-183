@@ -1,14 +1,11 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const app = express();
+const userRoutes = require('./routes/userRoutes');
 
-const userRoute = require('./routes/User');
-const authRoute = require('./routes/Auth');
+app.use(bodyParser.json());
+app.use('/users', userRoutes);
 
-app.use(express.json()); 
-
-app.use('/user', userRoute);
-app.use('/login', authRoute);
-
-app.listen(8080, () => {
-    console.log('Server running on port 8080');
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
 });
