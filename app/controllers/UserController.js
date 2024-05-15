@@ -15,7 +15,7 @@ exports.getUserProfile = (req, res) => {
   const userId = req.session.userId;
   const username = req.params.username;
 
-  // Vérifier si l'utilisateur est connecté
+  //est ce que l'utilisateur est connecté à un compte
   if (!userId) {
     res.status(401).json({ error: "Vous devez vous connecter" });
     return;
@@ -23,19 +23,24 @@ exports.getUserProfile = (req, res) => {
 
   const query = `SELECT * FROM t_users WHERE username = ?`;
   connection.query(query, [username], (err, results) => {
-    // Vérifier si le profil demandé appartient à l'utilisateur connecté
+    //erreur imprévue
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: "Internal server error" });
+      return;
+    }
+
+    //le user voulu n'existe pas 
+    if (results.length === 0) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    //l'utilisateur n'est pas connecté au compte qu'il veut consulté
     if (userId !== results[0].id) {
       res.status(403).json({
         error: "Vous devez être connecté à ce compte pour le consulter",
       });
-      return;
-    } else if (results.length === 0) {
-      res.status(404).json({ error: "User not found" });
-      return;
-    }
-    if (err) {
-      console.error(err);
-      res.status(500).json({ error: "Internal server error" });
       return;
     }
 
@@ -43,6 +48,7 @@ exports.getUserProfile = (req, res) => {
     res.json(userProfile);
   });
 };
+
 
 exports.loginUser = (req, res) => {
   const { username, password } = req.body;
@@ -78,7 +84,7 @@ exports.loginUser = (req, res) => {
 
 exports.searchUsers = (req, res) => {
   const { name } = req.query;
-  const query = `SELECT * FROM users WHERE username LIKE ?`;
+  const query = `SELECT * FROM t_users WHERE username LIKE ?`;
   connection.query(query, [`%${name}%`], (err, results) => {
     if (err) {
       console.error(err);

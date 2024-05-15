@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
+const isAdmin = require('../middleware/isAdmin');
 
-// Route pour la recherche d'utilisateurs dans la page d'administration
-router.get('/search', adminController.searchUsers);
+router.get('/admin', isAdmin, adminController.adminPage);
+
+router.get('/admin/search',isAdmin, adminController.searchUsers);
 
 module.exports = router;
