@@ -52,7 +52,7 @@ exports.getUserProfile = (req, res) => {
 
 exports.loginUser = (req, res) => {
   const { username, password } = req.body;
-
+  
   // Vérifier si l'utilisateur existe
   userModel.getUserByUsername(username, (err, user) => {
     if (err) {
@@ -127,4 +127,16 @@ exports.signupUser = (req, res) => {
       res.json({ message: "Signup successful" });
     });
   });
+};
+
+exports.homePage = (req,res) => {
+  res.send(`
+    <form action="/login" method="post">
+      <h1>login (pour utilisastion admin page)</h1>
+      <input type="text" name="username" placeholder="Nom utilisateur">
+      <input type="password" name="password" placeholder="Mot de passe">
+      <button type="submit">Se connecter</button>
+    </form>
+  `);
+  
 };
