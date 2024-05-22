@@ -11,16 +11,14 @@ const dbConfig = {
 };
 const connection = mysql.createConnection(dbConfig);
 
-
 exports.adminPage = (req, res) => {
   res.send(`
     <form action="/admin/search" method="get">
-      <input type="text" name="name" placeholder="Nom du visiteur">
+      <input type="text" name="name" placeholder="Nom utilisateur">
       <button type="submit">Rechercher</button>
     </form>
   `);
 };
-
 
 exports.searchUsers = (req, res) => {
   const { name } = req.query;
@@ -31,6 +29,11 @@ exports.searchUsers = (req, res) => {
       res.status(500).json({ error: "Internal server error" });
       return;
     }
-    res.json(results);
+
+    if (results.length > 0) {
+      res.json(results);
+    } else {
+      res.json({ message: "No users found" });
+    }
   });
 };
